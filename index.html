@@ -1,0 +1,75 @@
+<html>
+<head>
+	<title>Chat with socket.io and node.js</title>
+	<style>
+		#chat{
+			height:500px;
+			width:450px;
+		}
+	</style>
+</head>
+<body>
+
+    <form id="register" >
+        <input type="text" id="name" placeholder="Your Nickname here"/>
+        <input type="submit" value="Set"/>
+    </form>
+
+	<div id="chat" style="border:1px solid;">
+  </div>
+	<form id="send-message">
+		<input size="35" id="message"></input>
+		<input type="submit" value="Send"></input>
+    <span id="typing"></span>
+    <div id="counter">Online : <span id="online">0</span></div>
+	</form>
+
+	<!-- <script src="http://localhost/jquery-latest.min.js"></script> -->
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		jQuery(function($){
+       var $register=$('#register');
+       var $name=$('#name');
+			var socket = io.connect(); //io();
+			var $messageForm = $('#send-message');
+			var $messageBox = $('#message');
+			var $chat = $('#chat');
+       var $online= $('#online');
+       var $nickname="";
+       var $typing=$('#typing');
+      $messageForm.hide();
+      $chat.hide();
+      $register.submit(function(e){
+        e.preventDefault();
+        $nickname=$name.val();
+        $messageForm.show();
+        $chat.show();
+        $register.hide();
+      });
+
+      $messageForm.submit(function(e){
+				e.preventDefault();
+				socket.emit('send message', $messageBox.val(),$nickname);
+				$messageBox.val('');
+			});
+			socket.on('new message', function(data,name){
+				$chat.append(name+" : "+data + "<br/>");
+				$typing.text('');
+			});
+      socket.on('count online user',function(count){
+        $online.text(count);
+      });
+      $messageBox.keypress(function(){
+				socket.emit('keypress', {nickname: $nickname});
+        //socket.emit('keypress',$nickname);
+      });
+      socket.on('typing',function(name){
+				console.log(name);
+        $typing.text(name+" is typing...");
+      });
+
+		});
+	</script>
+</body>
+</html>
