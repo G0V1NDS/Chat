@@ -22,7 +22,7 @@
     "url": "https://github.com/govindsinghr3/Chat/issues"
   },
   "engines": {
-    "node": "4.2.6"
+    "node": "4.3.0"
   },
   "homepage": "https://github.com/govindsinghr3/Chat#readme"
 }
